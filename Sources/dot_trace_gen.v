@@ -50,6 +50,8 @@ module dot_trace_gen(
     // object output signals
     wire [11:0] text_rgb, text_rev_rgb;
     
+    //internal wires
+    //wire [4:0] w_enc1, w_enc2;
     
     //Body
     // Initialize debounce for buttons if used
@@ -133,8 +135,8 @@ module dot_trace_gen(
     //Below is irrelevant and applies to ASCII ROM
     // green over black and reversed video for cursor
 
-    assign text_rgb = (ascii_bit) ? 12'h0F0 : 12'h000;
-    assign text_rev_rgb = (ascii_bit) ? 12'h000 : 12'h0F0;
+    assign text_rgb = (ascii_bit) ? 12'h000 : 12'hFFF;
+    assign text_rev_rgb = (ascii_bit) ? 12'hAAA : 12'hFFF;
     // use delayed coordinates for comparison
     
     assign cursor_on = (pix_y2_reg[8:4] == cur_y_reg) &&
