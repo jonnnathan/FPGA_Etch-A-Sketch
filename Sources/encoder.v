@@ -51,7 +51,7 @@ module encoder(
 				 if(curState != nextState) begin
 						if(curState == "add") begin
 								if(EncOut < 19) begin
-									EncOut <= EncOut + 1;
+									EncOut <= EncOut + 1;						 
 								end
 								else begin
 									EncOut <= 0;
@@ -102,7 +102,6 @@ module encoder(
 				     // R1
 					  "R1" : begin
 							 LED <= 2'b01;
-
 							 if (B == 1'b1) begin
 								 nextState <= "idle";
 							 end
@@ -116,7 +115,6 @@ module encoder(
 					  // R2
 					  "R2" : begin
 							 LED <= 2'b01;
-
 							 if (A == 1'b1) begin
 								 nextState <= "R1";
 							 end
@@ -130,7 +128,6 @@ module encoder(
 					  // R3
 					  "R3" : begin
 							 LED <= 2'b01;
-
 							 if (B == 1'b0) begin
 								 nextState <= "R2";
 							 end
@@ -144,7 +141,6 @@ module encoder(
 					  // R3
 					  "R3" : begin
 							 LED <= 2'b01;
-
 							 if (B == 1'b0) begin
 								 nextState <= "R2";
 							 end
@@ -164,7 +160,6 @@ module encoder(
                  // L1
 					  "L1" : begin
 							 LED <= 2'b10;
-
 							 if (A == 1'b1) begin
 								 nextState <= "idle";
 							 end
@@ -178,7 +173,6 @@ module encoder(
                  // L2
 					  "L2" : begin
 							 LED <= 2'b10;
-
 							 if (B == 1'b1) begin
 								 nextState <= "L1";
 							 end
@@ -192,7 +186,6 @@ module encoder(
                  // L3
 					  "L3" : begin
 							 LED <= 2'b10;
-
 							 if (A == 1'b0) begin
 								 nextState <= "L2";
 							 end
@@ -203,7 +196,7 @@ module encoder(
 								 nextState <= "L3";
 							 end
 					  end
-                 // Sub
+                    // Sub
 					  "sub" : begin
 							 LED <= 2'b10;
 							 nextState <= "idle";
