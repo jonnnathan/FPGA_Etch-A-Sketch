@@ -6,6 +6,7 @@ module debounce_tb;
     reg Bin_tb;
     wire Aout_tb;
     wire Bout_tb;
+   
     
     debounce uut(
         .clk(clk_tb), 
@@ -19,88 +20,80 @@ module debounce_tb;
         clk_tb = 0;
         forever #1 clk_tb = ~clk_tb;
     end
+    //For Ain_tb
     initial begin
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #10;
-        Ain_tb = 1;
-        Bin_tb = 1;
-        #20;
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #10;
-        Ain_tb = 1;
-        Bin_tb = 1;
-        #30; 
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #10;
-        Ain_tb = 1;
-        Bin_tb = 1;
-        #40;
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #10;
-        Ain_tb = 1;
-        Bin_tb = 1;
-        #30; 
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #10;
-        Ain_tb = 1; 
-        Bin_tb = 1;
-        #60; 
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #100;
-        Ain_tb = 0;
-        Bin_tb = 1;
-        #100;
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #300;
+    /////////////////////////////////////////////////////////////////////////
+        Ain_tb = 0;                                                        //
+        #200;                                                              //This test cycle is to produce a 
+        Ain_tb = 1;                                                        //clockwise rotation, since the
+        #200;                                                              //following sequence produces
+        Ain_tb = 1;                                                        //an increment rotation
+        #200;                                                              //11, 10, 00, 01, 11
+        Ain_tb = 1;                                                        //
+        #200;                                                              //
+        Ain_tb = 0;                                                        //
+        #200;                                                              //
+        Ain_tb = 0;                                                        //
+        #200;                                                              //
+        Ain_tb = 1;                                                        //
+        #200;                                                              //
+    /////////////////////////////////////////////////////////////////////////
+    
+    /////////////////////////////////////////////////////////////////////////
+        Ain_tb = 0;                                                        //
+        #200;                                                              //This test cycle is to produce a 
+        Ain_tb = 1;                                                        //counterclockwise rotation, since the
+        #200;                                                              //since the following sequence produces
+        Ain_tb = 1;                                                        //an decrement rotation
+        #200;                                                              //11, 01, 00, 10, 11
+        Ain_tb = 0;                                                        //
+        #200;                                                              //
+        Ain_tb = 0;                                                        //
+        #200;                                                              //
+        Ain_tb = 1;                                                        //
+        #200;                                                              //
+        Ain_tb = 1;                                                        //
+        #200;                                                              //
+    /////////////////////////////////////////////////////////////////////////
+        $finish;
         
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #10;
-        Ain_tb = 1;
-        Bin_tb = 1;
-        #20;
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #10;
-        Ain_tb = 1;
-        Bin_tb = 1;
-        #30; 
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #10;
-        Ain_tb = 1;
-        Bin_tb = 1;
-        #40;
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #10;
-        Ain_tb = 1;
-        Bin_tb = 1;
-        #30; 
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #10;
-        Ain_tb = 1; 
-        Bin_tb = 1;
-        #60; 
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #100;
-        Ain_tb = 1;
-        Bin_tb = 1;
-        #100;
-        Ain_tb = 0;
-        Bin_tb = 0;
-        #300;
-        
-             
+    end
+    //For Bin_tb
+    initial begin
+    /////////////////////////////////////////////////////////////////////////
+        Bin_tb = 0;                                                        //
+        #200;                                                              //Similar to test cases in A
+        Bin_tb = 1;                                                        //Counter Clockwise Read
+        #200;                                                              //
+        Bin_tb = 1;                                                        //
+        #200;                                                              //
+        Bin_tb = 0;                                                        //
+        #200;                                                              //
+        Bin_tb = 0;                                                        //
+        #200;                                                              //
+        Bin_tb = 1;                                                        //
+        #200;                                                              //
+        Bin_tb = 1;                                                        //
+        #200;                                                              //
+     /////////////////////////////////////////////////////////////////////////
+     
+     /////////////////////////////////////////////////////////////////////////
+         Bin_tb = 0;                                                        //
+         #200;                                                              //Similar to test cases in A
+         Bin_tb = 1;                                                        //Counter Clockwise Read
+         #200;                                                              //
+         Bin_tb = 1;                                                        //
+         #200;                                                              //
+         Bin_tb = 1;                                                        //
+         #200;                                                              //
+         Bin_tb = 0;                                                        //
+         #200;                                                              //
+         Bin_tb = 0;                                                        //
+         #200;                                                              //
+         Bin_tb = 1;                                                        //
+         #200;                                                              //
+      /////////////////////////////////////////////////////////////////////////
         $finish;
     end
+    
 endmodule
