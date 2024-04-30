@@ -30,7 +30,7 @@ module dot_trace_gen(
     
     
     //tile RAM
-    wire we;                //write enable to RAM
+    wire we;                            //write enable to RAM
     wire [11:0] addr_r, addr_w;         //Read and write
     wire [6:0] din, dout;              
     
@@ -51,7 +51,7 @@ module dot_trace_gen(
     wire [11:0] text_rgb, text_rev_rgb;
     
     //internal wires
-    //wire [4:0] w_enc1, w_enc2;
+    wire [4:0] w_enc1, w_enc2;
     
     //Body
     // Initialize debounce for buttons if used
@@ -61,16 +61,19 @@ module dot_trace_gen(
     debounce KnobX_db(.clk(clk_100MHz), .Ain(KnobX[0]), .Bin(KnobX[1]), .Aout(w_Knob_Down), .Bout(w_Knob_Up));         
     debounce KnobY_db(.clk(clk_100MHz), .Ain(KnobY[0]), .Bin(KnobY[1]), .Aout(w_Knob_Left), .Bout(w_Knob_Right));
     
-    debounce_chu KnobUp(.clk(clk_100MHz), .reset(reset), .sw(w_Knob_Up), .db_level(), .db_tick(move_y_Up));
-    debounce_chu KnobDown(.clk(clk_100MHz), .reset(reset), .sw(w_Knob_Down), .db_level(), .db_tick(move_y_Down));
-    debounce_chu KnobLeft(.clk(clk_100MHz), .reset(reset), .sw(w_Knob_Left), .db_level(), .db_tick(move_x_Left));
-    debounce_chu KnobRight(.clk(clk_100MHz), .reset(reset), .sw(w_Knob_Right), .db_level(), .db_tick(move_x_Right));
+    //debounce_chu KnobUp(.clk(clk_100MHz), .reset(reset), .sw(w_Knob_Up), .db_level(), .db_tick(move_y_Up));
+    //debounce_chu KnobDown(.clk(clk_100MHz), .reset(reset), .sw(w_Knob_Down), .db_level(), .db_tick(move_y_Down));
+    //debounce_chu KnobLeft(.clk(clk_100MHz), .reset(reset), .sw(w_Knob_Left), .db_level(), .db_tick(move_x_Left));
+    //debounce_chu KnobRight(.clk(clk_100MHz), .reset(reset), .sw(w_Knob_Right), .db_level(), .db_tick(move_x_Right));
     
     //Encoder module for both rotary encoders which works on an FSM
-    //encoder  KnobY_enc(.clk(clk_100MHz), .A(w_Knob_Right), .B(w_Knob_Left), .BTN(), .EncOut(w_enc2), .LED(LED[3:2]));
-    //encoder  KnobX_enc(.clk(clk_100MHz), .A(w_Knob_Up), .B(w_Knob_Down), .BTN(), .EncOut(w_enc1), .LED(LED[1:0]));
-    
-    
+    encoder  KnobX_enc(.clk(clk_100MHz), .A(w_Knob_Right), .B(w_Knob_Left), .BTN(), .EncOut(w_enc1), .LED(LED[3:2]));
+    encoder  KnobY_enc(.clk(clk_100MHz), .A(w_Knob_Up), .B(w_Knob_Down), .BTN(), .EncOut(w_enc2), .LED(LED[1:0]));
+     
+     //Will inteperet if the output from EncOut has increased or decreased.
+    CompareEnc UpDown(.clk(clk_100MHz), .reset(reset), .Encout(w_enc1), .decrease(move_y_Down), .increase(move_y_Up));
+    CompareEnc RightLeft(.clk(clk_100MHz), .reset(reset), .Encout(w_enc2), .decrease(move_x_Left), .increase(move_x_Right));
+     
     ascii_rom ascrom(.clk(clk_100MHz), .addr(rom_addr), .data(font_word));
     
     //instatiate the dual-port video RAM
@@ -82,8 +85,8 @@ module dot_trace_gen(
     //to where it corresponds on the display
     always @(posedge clk_100MHz or posedge reset)
         if(reset) begin
-            cur_x_reg <= 0;
-            cur_y_reg <= 0;
+            cur_x_reg <= 10;
+            cur_y_reg <= 10 ;
             pix_x1_reg <= 0;
             pix_x2_reg <= 0;
             pix_y1_reg <= 0;
