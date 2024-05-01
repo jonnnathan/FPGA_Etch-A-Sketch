@@ -24,9 +24,10 @@ module top(
     input clk,              //100Mhz clock that will come from the Board
     input reset,            //Reset switch assigned to *SWITCH*
     input Trace,            //User based switch that will enable tracing
+    input Clear,
     //KnobX = PmodJA w/ inA and inB being used from the PmodENC   //KnobY = PmodJB w/ inA and inB being used from the PmodENC
     input [5:4] KnobX, KnobY,   
-    input [6:0] sw,
+    //input [6:0] sw,
     //LED [3] = Left/ LED[2] = Right / LED[1] = Up / LED[0] Down
     output [3:0] LED,
     output hsync, vsync,
@@ -57,9 +58,10 @@ module top(
         .reset(reset),
         .video_on(w_vid_on),
         .Trace(Trace),
+        .Clear(Clear),
         .KnobX(KnobX),
         .KnobY(KnobY),
-        .sw(sw),
+        //.sw(sw),
         .x(w_x),
         .y(w_y),
         .LED(LED),
