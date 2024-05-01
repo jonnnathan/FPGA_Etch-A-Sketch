@@ -11,7 +11,7 @@ module dot_trace_gen(
     //KnobX will direct Right and Left / KnobY will direct Up and Down
     //KnobX = PmodJA w/ inA and inB being used from the PmodENC   //KnobY = PmodJB w/ inA and inB being used from the PmodENC
     input [1:0] KnobX, KnobY,
-    input [6:0] sw,
+    //input [6:0] sw,
            
     input [9:0] x, y,
     //Implement LED so that it can indicate direction for feedback
@@ -156,7 +156,7 @@ module dot_trace_gen(
     
     assign text_rgb = (ascii_bit) ? 12'h000 : 12'hFFF;              //Black : White
                                                                     //Trace is on so leave black trace : Trace is off so just cursor                                                           
-    assign text_rev_rgb = (ascii_bit) ? 12'hAAA : 12'hFFF;          //gray :  White
+    assign text_rev_rgb = (ascii_bit) ? 12'h0F0 : 12'hF00;          //gray :  White
                                                                     //Over a traced dot: Trace no activated over background   
     // use delayed coordinates for comparison
     
