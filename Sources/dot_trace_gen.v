@@ -6,11 +6,13 @@ module dot_trace_gen(
     input video_on,
     //In our case set should always be on because the dot tracing is always on in the real life Etch A Sketch
     //But we can change it to allow the user to turn it on or off at any given moment
-    input Trace,            //Trace Assignment will be left as an On: Trace, Off: No Trace  
+    input Trace,            //Trace Assignment will be left as an On: Trace, Off: No Trace 
+    input Clear, 
     //KnobX will direct Right and Left / KnobY will direct Up and Down
     //KnobX = PmodJA w/ inA and inB being used from the PmodENC   //KnobY = PmodJB w/ inA and inB being used from the PmodENC
     input [1:0] KnobX, KnobY,
-    input [6:0] sw,       
+    input [6:0] sw,
+           
     input [9:0] x, y,
     //Implement LED so that it can indicate direction for feedback
     //LED [3] = Left/ LED[2] = Right / LED[1] = Up / LED[0] Down
@@ -35,23 +37,26 @@ module dot_trace_gen(
     wire [6:0] din, dout;              
     
     //80 by 30 tile map
-    parameter MAX_X = 80;   //640 pixels / 8 data bits = 80
-    parameter MAX_Y = 30;   //480 pixels / 16 data bits = 30
+    parameter MAX_X = 79;   //640 pixels / 8 data bits = 80
+    parameter MAX_Y = 29;   //480 pixels / 16 data bits = 30
     
     // cursor
-    reg [6:0] cur_x_reg;
-    wire [6:0] cur_x_next;
-    reg [4:0] cur_y_reg;
-    wire [4:0] cur_y_next;
+    reg [6:0] cur_x_reg;                            //Has the starting values
+    wire [6:0] cur_x_next;                          //Keeps track of the currenct value
+    reg [4:0] cur_y_reg;                            //Has the starting values    
+    wire [4:0] cur_y_next;                          // Keeps track of the current value
     wire move_x_Left, move_x_Right, move_y_Up, move_y_Down, cursor_on;
     // delayed pixel count
     reg [9:0] pix_x1_reg, pix_y1_reg;
     reg [9:0] pix_x2_reg, pix_y2_reg;
     // object output signals
+    
     wire [11:0] text_rgb, text_rev_rgb;
     
     //internal wires
     wire [4:0] w_enc1, w_enc2;
+    
+    //RGB registers
     
     //Body
     // Initialize debounce for buttons if used
@@ -85,20 +90,30 @@ module dot_trace_gen(
     //to where it corresponds on the display
     always @(posedge clk_100MHz or posedge reset)
         if(reset) begin
-            cur_x_reg <= 10;
-            cur_y_reg <= 10 ;
+            cur_x_reg <= 35;
+            cur_y_reg <= 15;
             pix_x1_reg <= 0;
             pix_x2_reg <= 0;
             pix_y1_reg <= 0;
             pix_y2_reg <= 0;
         end    
         else begin
-            cur_x_reg <= cur_x_next;
-            cur_y_reg <= cur_y_next;
-            pix_x1_reg <= x;
-            pix_x2_reg <= pix_x1_reg;
-            pix_y1_reg <= y;
-            pix_y2_reg <= pix_y1_reg;
+            if(~Clear)begin
+                cur_x_reg <= cur_x_next;
+                cur_y_reg <= cur_y_next;
+                pix_x1_reg <= x;
+                pix_x2_reg <= pix_x1_reg;
+                pix_y1_reg <= y;
+                pix_y2_reg <= pix_y1_reg;
+                //Dot <= 12'h000;
+            end
+            else if(Clear) begin
+                //Dot <= 12'hFFF;
+                cur_x_reg <= cur_x_reg + 1;
+                if(cur_x_reg == 79) begin
+                    cur_y_reg <= cur_y_reg + 1;
+                end
+            end
         end    
 
     
@@ -106,7 +121,7 @@ module dot_trace_gen(
     //Will write the x and y location of the cursor to the RAM
     assign addr_w = {cur_y_reg, cur_x_reg};  
     assign we = Trace;
-    assign din = sw;   
+    assign din = (~Clear) ? 7'b00000001: 7'b0000000;   
     // tile RAM read
     // use nondelayed coordinates to form tile RAM address
     assign addr_r = {y[8:4], x[9:3]};
@@ -135,21 +150,20 @@ module dot_trace_gen(
 
     // object signals
     
-    //Below is irrelevant and applies to ASCII ROM
-    // green over black and reversed video for cursor
-
-    assign text_rgb = (ascii_bit) ? 12'h000 : 12'hFFF;
-    assign text_rev_rgb = (ascii_bit) ? 12'hAAA : 12'hFFF;
+    assign text_rgb = (ascii_bit) ? 12'h000 : 12'hFFF;              //Black : White
+                                                                    //Trace is on so leave black trace : Trace is off so just cursor                                                           
+    assign text_rev_rgb = (ascii_bit) ? 12'hAAA : 12'hFFF;          //gray :  White
+                                                                    //Over a traced dot: Trace no activated over background   
     // use delayed coordinates for comparison
     
     assign cursor_on = (pix_y2_reg[8:4] == cur_y_reg) &&
                        (pix_x2_reg[9:3] == cur_x_reg);
 // rgb multiplexing circuit
-   always @*
+    always @*
        if(~video_on)
-           rgb = 12'h000;     // blank
+           rgb = 12'h000;     // Background
        else
-           if(cursor_on)
+           if(cursor_on)  
                rgb = text_rev_rgb;
            else
                rgb = text_rgb;
