@@ -110,7 +110,7 @@ module dot_trace_gen(
             else if(Clear) begin
                 //Dot <= 12'hFFF;
                 cur_x_reg <= cur_x_reg + 1;
-                if(cur_x_reg == 79) begin
+                if(cur_x_reg == MAX_X) begin
                     cur_y_reg <= cur_y_reg + 1;
                 end
             end
