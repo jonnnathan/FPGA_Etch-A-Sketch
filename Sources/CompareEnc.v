@@ -27,21 +27,27 @@ module CompareEnc(
     output reg decrease,        //Decrease meaning that the value is less than before and will return a 1
     output reg increase         //Increase meaning that the value is greater and will return a 1
     );
-    
+
     reg [4:0] prev_Encout;
-    
-    always @(posedge clk) begin
-        if (Encout > prev_Encout) begin
-            increase <= 1; // Encout has increased
-            decrease <= 0;
-        end else if (Encout < prev_Encout) begin
+
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
             increase <= 0;
-            decrease <= 1; // Encout has decreased
-        end else begin
-            increase <= 0; // Encout remains the same
             decrease <= 0;
+            prev_Encout <= 0; // Reset the previous value
+        end else begin
+            if (Encout > prev_Encout) begin
+                increase <= 1; // Encout has increased
+                decrease <= 0;
+            end else if (Encout < prev_Encout) begin
+                increase <= 0;
+                decrease <= 1; // Encout has decreased
+            end else begin
+                increase <= 0; // Encout remains the same
+                decrease <= 0;
+            end
+            prev_Encout <= Encout;
         end
-    
-        prev_Encout <= Encout;
     end
+
 endmodule

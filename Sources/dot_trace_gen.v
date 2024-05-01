@@ -72,11 +72,11 @@ module dot_trace_gen(
     //debounce_chu KnobRight(.clk(clk_100MHz), .reset(reset), .sw(w_Knob_Right), .db_level(), .db_tick(move_x_Right));
     
     //Encoder module for both rotary encoders which works on an FSM
-    encoder  KnobX_enc(.clk(clk_100MHz), .A(w_Knob_Right), .B(w_Knob_Left), .BTN(), .EncOut(w_enc1), .LED(LED[3:2]));
-    encoder  KnobY_enc(.clk(clk_100MHz), .A(w_Knob_Up), .B(w_Knob_Down), .BTN(), .EncOut(w_enc2), .LED(LED[1:0]));
+    encoder  KnobX_enc(.clk(clk_100MHz), .A(w_Knob_Right), .B(w_Knob_Left), .EncOut(w_enc1), .LED(LED[3:2]));
+    encoder  KnobY_enc(.clk(clk_100MHz), .A(w_Knob_Up), .B(w_Knob_Down), .EncOut(w_enc2), .LED(LED[1:0]));
      
      //Will inteperet if the output from EncOut has increased or decreased.
-    CompareEnc UpDown(.clk(clk_100MHz), .reset(reset), .Encout(w_enc1), .decrease(move_y_Down), .increase(move_y_Up));
+    CompareEnc UpDown(.clk(clk_100MHz), .reset(reset), .Encout(w_enc1), .decrease(move_y_Up), .increase(move_y_Down));
     CompareEnc RightLeft(.clk(clk_100MHz), .reset(reset), .Encout(w_enc2), .decrease(move_x_Left), .increase(move_x_Right));
      
     ascii_rom ascrom(.clk(clk_100MHz), .addr(rom_addr), .data(font_word));
@@ -120,8 +120,12 @@ module dot_trace_gen(
     //tile RAM write
     //Will write the x and y location of the cursor to the RAM
     assign addr_w = {cur_y_reg, cur_x_reg};  
-    assign we = Trace;
-    assign din = (~Clear) ? 7'b00000001: 7'b0000000;   
+    assign we = (~Clear) ? Trace: 1;
+    assign din = (~Clear) ? 7'b00000001: 7'b0000000; 
+    
+    //wire reset_n;
+    //assign reset_n = (reset) ? ~Trace : Trace;
+      
     // tile RAM read
     // use nondelayed coordinates to form tile RAM address
     assign addr_r = {y[8:4], x[9:3]};
